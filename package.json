@@ -1,0 +1,9 @@
+{
+  "name": "zoomlog",
+  "private": true,
+  "scripts": {
+    "client": "npm start --prefix client",
+    "server": "node server/index.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  }
+}
