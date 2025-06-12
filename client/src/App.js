@@ -2,6 +2,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import "./App.css";
+import "./Calendar.js";
+import WeeklyCalendar from "./Calendar.js";
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -29,7 +31,8 @@ function App() {
         </header>
 
         <main className="App-main">
-          <h1>Welcome to the App</h1>
+          <h1> </h1>
+          <WeeklyCalendar />
 
           <span>Notes</span>
           <div>
