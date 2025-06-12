@@ -31,29 +31,28 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
   return (
     <div className="modal-backdrop">
       <div className="modal">
-        <title>Edit Event</title>
-
+        <h1>Edit Event: {event.title}</h1>
         <input
           type="text"
-          placeholder="Event Time"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Event Title"
+          placeholder={event.title}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <input
           type="text"
-          placeholder="Description"
+          placeholder={event.startTime}
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder={event.notes}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
         <input
           type="text"
-          placeholder="Next Steps"
+          placeholder={event.next_steps}
           value={nextSteps}
           onChange={(e) => setNextSteps(e.target.value)}
         />
