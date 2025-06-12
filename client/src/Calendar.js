@@ -70,12 +70,15 @@ export default function WeeklyCalendar() {
     fetchEvents();
   }, [weekStart, modalOpen, editModalOpen]);
 
-  const handleSlotClick = (day, hour) => {
-    const handleEventBlockClick = (event) => {
-      setEventToEdit(event);
-      setEditModalOpen(true);
-    };
+  const handleEventUpdate = async (updatedEvent) => {
+    await axios.put(
+      `http://localhost:5000/api/events/${updatedEvent.id}`,
+      updatedEvent
+    );
+    setEditModalOpen(false);
+  };
 
+  const handleSlotClick = (day, hour) => {
     // console.log("Clicked slot:", day, hour);
     const start = new Date(day);
     start.setHours(hour, 0, 0, 0);
@@ -87,7 +90,6 @@ export default function WeeklyCalendar() {
 
   const handleEventBlockClick = (event) => {
     setEventToEdit(event);
-
     setEditModalOpen(true);
   };
 
@@ -140,6 +142,13 @@ export default function WeeklyCalendar() {
         slotTime={selectedSlot}
         onClose={() => setModalOpen(false)}
         onSubmit={handleModalSubmit}
+      />
+
+      <EditEventModal
+        isOpen={editModalOpen}
+        event={eventToEdit}
+        onClose={() => setEditModalOpen(false)}
+        onSubmit={handleEventUpdate}
       />
 
       <header>

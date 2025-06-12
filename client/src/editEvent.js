@@ -4,8 +4,9 @@
 import React, { useState } from "react";
 import "./EventModal.css";
 
-export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
+export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
   const [title, setTitle] = useState("");
+  const [time, setTime] = useState("");
   const [description, setDescription] = useState("");
   const [nextSteps, setNextSteps] = useState("");
 
@@ -13,7 +14,7 @@ export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
 
   const handleSubmit = () => {
     if (!title) return;
-    onSubmit({ title, start: slotTime, description, nextSteps });
+    onSubmit({ title, start: time, description, nextSteps });
     setTitle("");
     setDescription("");
     setNextSteps("");
@@ -30,8 +31,14 @@ export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
   return (
     <div className="modal-backdrop">
       <div className="modal">
-        <h2>New Event</h2>
-        <p>{slotTime.toLocaleString()}</p>
+        <title>Edit Event</title>
+
+        <input
+          type="text"
+          placeholder="Event Time"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+        />
         <input
           type="text"
           placeholder="Event Title"

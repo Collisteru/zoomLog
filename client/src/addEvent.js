@@ -27,6 +27,7 @@ export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
 
   return (
     <div className="modal-backdrop">
+      <title>New Event</title>
       <div className="modal">
         <h2>New Event</h2>
         <p>{slotTime.toLocaleString()}</p>
