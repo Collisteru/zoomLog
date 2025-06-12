@@ -19,3 +19,13 @@ model Note {
   body    String
   createdAt DateTime @default(now())
 }
+
+model Event {
+  id        Int      @id @default(autoincrement())
+  title     String
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime @default(now())
+  notes String
+  next_steps String
+}
