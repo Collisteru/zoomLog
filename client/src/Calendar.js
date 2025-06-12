@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 // import axios from "axios";
 import "./App.css";
+import AddEventModal from "./addEvent";
 
 // Setting up calendar with proper date handling
 
@@ -48,38 +49,51 @@ export default function WeeklyCalendar() {
 
   const [newEventSlot, setNewEventSlot] = useState(null);
   const [eventTitle, setEventTitle] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [weekStart, setWeekStart] = useState(startOfWeek(new Date()));
 
   const handleSlotClick = (day, hour) => {
     // console.log("Clicked slot:", day, hour);
     const start = new Date(day);
     start.setHours(hour, 0, 0, 0);
     setNewEventSlot(start);
-    submitEvent(start);
+    setSelectedSlot(start);
+    setModalOpen(true);
+    // submitEvent(start);
   };
 
-  const submitEvent = async (start) => {
+  const handleModalSubmit = async ({
+    title,
+    start,
+    description,
+    nextSteps,
+  }) => {
     const end = new Date(start);
     end.setHours(end.getHours() + 1);
 
-    const res = await fetch("http://localhost:5000/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: eventTitle,
-        startTime: start.toISOString(),
-        endTime: end.toISOString(),
-        notes: "Test notes",
-        next_steps: "Test next steps",
-      }),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          startTime: start.toISOString(),
+          endTime: end.toISOString(),
+          notes: description,
+          next_steps: nextSteps,
+        }),
+      });
 
-    const result = await res.json();
-    setNewEventSlot(null);
-    setEventTitle("Test Event");
-    console.log("Event created:", result);
+      const result = await res.json();
+      console.log("Event saved:", result);
+      setNewEventSlot(null);
+      setEventTitle("Test Event");
+      // Optionally close modal or refresh events here
+    } catch (error) {
+      console.error("Error saving event:", error);
+    }
   };
-
-  const [weekStart, setWeekStart] = useState(startOfWeek(new Date()));
 
   const prevWeek = () => setWeekStart(addDays(weekStart, -7));
   const nextWeek = () => setWeekStart(addDays(weekStart, 7));
@@ -93,6 +107,13 @@ export default function WeeklyCalendar() {
 
   return (
     <div className="Calendar-container">
+      <AddEventModal
+        isOpen={modalOpen}
+        slotTime={selectedSlot}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleModalSubmit}
+      />
+
       <header>
         <button onClick={prevWeek}>&lt;</button>
         <span style={{ margin: "0 1rem", fontWeight: "bold" }}>
