@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-// import axios from "axios";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./App.css";
 import AddEventModal from "./addEvent";
+import EditEventModal from "./editEvent";
+import EventBlock from "./EventBlock.js";
 
 // Setting up calendar with proper date handling
 
@@ -45,15 +47,35 @@ function generateHours() {
 }
 
 export default function WeeklyCalendar() {
-  // Clickable hours
-
+  // Calendar element State management
   const [newEventSlot, setNewEventSlot] = useState(null);
   const [eventTitle, setEventTitle] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [weekStart, setWeekStart] = useState(startOfWeek(new Date()));
+  const [eventToEdit, setEventToEdit] = useState(null);
+
+  // Upon each render, populate the calendar with events from the server
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/events");
+        setEvents(res.data);
+      } catch (err) {
+        console.error("Failed to fetch events:", err);
+      }
+    };
+    fetchEvents();
+  }, [weekStart, modalOpen, editModalOpen]);
 
   const handleSlotClick = (day, hour) => {
+    const handleEventBlockClick = (event) => {
+      setEventToEdit(event);
+      setEditModalOpen(true);
+    };
+
     // console.log("Clicked slot:", day, hour);
     const start = new Date(day);
     start.setHours(hour, 0, 0, 0);
@@ -61,6 +83,12 @@ export default function WeeklyCalendar() {
     setSelectedSlot(start);
     setModalOpen(true);
     // submitEvent(start);
+  };
+
+  const handleEventBlockClick = (event) => {
+    setEventToEdit(event);
+
+    setEditModalOpen(true);
   };
 
   const handleModalSubmit = async ({
@@ -148,6 +176,18 @@ export default function WeeklyCalendar() {
                   </button>
                 </div>
               ))}
+              {events
+                .filter(
+                  (e) =>
+                    new Date(e.startTime).toDateString() === day.toDateString()
+                )
+                .map((event) => (
+                  <EventBlock
+                    key={event.id}
+                    event={event}
+                    onClick={() => handleEventBlockClick(event)}
+                  />
+                ))}
             </div>
           </div>
         ))}
