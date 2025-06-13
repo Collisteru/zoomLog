@@ -7,7 +7,7 @@ export default function EventBlock({ event, onClick }) {
   const end = new Date(event.endTime);
 
   const durationHours = (end - start) / (1000 * 60 * 60);
-  const top = start.getHours() * 40 + start.getMinutes() + 280; // minutes from top
+  const top = start.getHours() * 40 + start.getMinutes() + 255; // minutes from top
   const height = durationHours * 60; // height in minutes
 
   return (
@@ -23,7 +23,7 @@ export default function EventBlock({ event, onClick }) {
         color: "white",
         padding: "2px",
         boxSizing: "border-box",
-        borderRadius: "4px",
+        borderRadius: "8px",
         overflow: "hidden",
         cursor: "pointer",
         fontSize: "0.75rem",

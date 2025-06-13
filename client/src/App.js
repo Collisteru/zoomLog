@@ -19,7 +19,7 @@ function App() {
         </header>
 
         <main className="App-main">
-          <GetEventsButton />
+          {/* <GetEventsButton /> */}
           <WeeklyCalendar />
         </main>
       </div>

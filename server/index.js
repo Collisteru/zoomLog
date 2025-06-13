@@ -85,6 +85,19 @@ app.put("/api/events/update", async (req, res) => {
   }
 });
 
+// Delete a meeting
+app.delete("/api/events/delete", async (req, res) => {
+  const { id } = req.body;
+  try {
+    const deletedEvent = await prisma.event.delete({
+      where: { id: parseInt(id) },
+    });
+    res.json(deletedEvent);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Get all meetings
 app.get("/api/events", async (req, res) => {
   const events = await prisma.event.findMany();

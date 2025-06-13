@@ -2,6 +2,7 @@
 
 // TODO: Make this different in all the importnat ways from addModal
 import React, { useState } from "react";
+import axios from "axios";
 import "./EventModal.css";
 
 export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
@@ -18,6 +19,14 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
     setTitle("");
     setDescription("");
     setNextSteps("");
+    onClose();
+  };
+
+  const onDelete = async () => {
+    console.log("Hi from the client. Delete request.");
+    await axios.delete(`http://localhost:5000/api/events/delete`, {
+      data: { id: event.id },
+    });
     onClose();
   };
 
@@ -69,7 +78,8 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
           />
         </div>
         <div className="modal-buttons">
-          <button onClick={handleSubmit}>Add</button>
+          <button onClick={handleSubmit}>Update</button>
+          <button onClick={onDelete}>Delete</button>
           <button onClick={clearFields}>Cancel</button>
         </div>
       </div>
