@@ -192,18 +192,20 @@ app.get("/api/recordings", async (req, res) => {
 
 // --- OpenAI Endpoints --- //
 
+console.log("OpenAI Key:", process.env.OPENAI_KEY);
 const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
 
-// Summarize transcription
+// AI Summarizer
 app.post("/api/summarize", async (req, res) => {
-  console.log("req:", req);
-  console.log("Summarizing transcription...");
+  console.log("Reaching the summarize endpoint");
   const { transcription } = req.body;
 
   if (!transcription)
     return res.status(400).json({ error: "Missing transcription" });
+
   try {
-    const completion = await openai.chat.completions.create({
+    // Generate summary
+    const summaryCompletion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
@@ -212,16 +214,40 @@ app.post("/api/summarize", async (req, res) => {
         },
         {
           role: "user",
-          content: `Summarize the following transcript into bullet points and next steps:\n\n${transcription}. Start the summary with SUMMARY: and next steps with NEXT STEPS:`,
+          content: `Summarize the following transcript into concise bullet points:\n\n${transcription}`,
         },
       ],
     });
 
-    const reply = completion.choices[0].message.content;
-    res.json({ summary: reply });
+    const summary = summaryCompletion.choices[0].message.content.trim();
+
+    console.log("Summary:", summary);
+    // Generate next steps
+    const nextStepsCompletion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a meeting assistant. Identify next steps from meetings.",
+        },
+        {
+          role: "user",
+          content: `Based on the following transcript, list clear next steps in bullet points:\n\n${transcription}`,
+        },
+      ],
+    });
+
+    const nextSteps = nextStepsCompletion.choices[0].message.content.trim();
+
+    console.log("Next Steps:", nextSteps);
+
+    res.json({ summary, nextSteps });
+    console.log("Wrapped up in the server.");
+    return res;
   } catch (err) {
     console.error("OpenAI error:", err.message);
-    res.status(500).json({ error: "Failed to generate summary" });
+    res.status(500).json({ error: "Failed to generate summary or next steps" });
   }
 });
 

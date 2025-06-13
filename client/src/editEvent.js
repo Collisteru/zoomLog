@@ -82,8 +82,12 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
           <button onClick={onDelete}>Delete</button>
           <button
             onClick={async () => {
-              const summary = await handleSummarize(transcript);
+              const { summary, nextSteps } = await handleSummarize(transcript);
+              console.log("Back in client.");
+              console.log(summary);
+              console.log(nextSteps);
               setDescription(summary);
+              setNextSteps(nextSteps);
             }}
           >
             Summarize

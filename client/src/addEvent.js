@@ -68,8 +68,9 @@ export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
           <button onClick={handleSubmit}>Add</button>
           <button
             onClick={async () => {
-              const summary = await handleSummarize(transcript);
+              const { summary, nextSteps } = await handleSummarize(transcript);
               setDescription(summary);
+              setNextSteps(nextSteps);
             }}
           >
             Summarize

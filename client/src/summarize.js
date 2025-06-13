@@ -9,12 +9,8 @@ export const handleSummarize = async (transcript) => {
       body: JSON.stringify({ transcription: transcript }),
     });
     const data = await response.json();
-    if (response.ok) {
-      return data.summary;
-    } else {
-      console.error("Error summarizing transcript:", data.error);
-      return ""; // return fallback on error
-    }
+    console.log("Back in client now.", data);
+    return data;
   } catch (error) {
     console.error("Error:", error);
     return ""; // return fallback on exception
