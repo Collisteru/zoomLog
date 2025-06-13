@@ -203,7 +203,7 @@ export default function WeeklyCalendar() {
                       height: "100%",
                       border: "none",
                       background: "transparent",
-                      textAlign: "center",
+                      textAlign: "left",
                       cursor: "pointer",
                       paddingLeft: "4px",
                     }}
