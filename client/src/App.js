@@ -20,7 +20,7 @@ function App() {
         </header>
 
         <main className="App-main">
-          <FetchRecordingsButton />
+          {/* <FetchRecordingsButton /> */}
           {/* <GetEventsButton /> */}
           <WeeklyCalendar />
         </main>

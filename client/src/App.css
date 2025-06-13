@@ -89,3 +89,14 @@
   height: 40px; /* adjust to fit your scroll area */
   box-sizing: border-box;
 }
+
+/* Modal styles */
+
+.event-input {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  height: 100px;
+}

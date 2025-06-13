@@ -5,6 +5,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const crypto = require("crypto");
 const { PrismaClient } = require("@prisma/client");
+const { OpenAI } = require("openai");
 
 // Import secrets
 require("dotenv").config();
@@ -187,6 +188,41 @@ app.get("/api/recordings", async (req, res) => {
       throw error;
     }
   };
+});
+
+// --- OpenAI Endpoints --- //
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
+
+// Summarize transcription
+app.post("/api/summarize", async (req, res) => {
+  console.log("req:", req);
+  console.log("Summarizing transcription...");
+  const { transcription } = req.body;
+
+  if (!transcription)
+    return res.status(400).json({ error: "Missing transcription" });
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a meeting assistant. Summarize meetings.",
+        },
+        {
+          role: "user",
+          content: `Summarize the following transcript into bullet points and next steps:\n\n${transcription}. Start the summary with SUMMARY: and next steps with NEXT STEPS:`,
+        },
+      ],
+    });
+
+    const reply = completion.choices[0].message.content;
+    res.json({ summary: reply });
+  } catch (err) {
+    console.error("OpenAI error:", err.message);
+    res.status(500).json({ error: "Failed to generate summary" });
+  }
 });
 
 app.use(express.static(path.join(__dirname, "../client/build")));

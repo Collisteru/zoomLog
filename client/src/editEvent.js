@@ -10,6 +10,7 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
   const [time, setTime] = useState("");
   const [description, setDescription] = useState("");
   const [nextSteps, setNextSteps] = useState("");
+  const [transcript, setTranscript] = useState("");
 
   if (!isOpen) return null;
 
@@ -40,43 +41,40 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
   return (
     <div className="modal-backdrop">
       <div className="modal">
-        <h1>Edit Event: {event.title}</h1>
-        <div>
-          <div>Title:</div>
-          <input
-            type="text"
-            placeholder={event.title}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-        <div>
-          <div>Time:</div>
-          <input
-            type="text"
-            placeholder={event.startTime}
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-          />
-        </div>
-        <div>
-          <div>Description:</div>
-          <input
-            type="text"
-            placeholder={event.notes}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
-        <div>
-          <div>Next Steps:</div>
-          <input
-            type="text"
-            placeholder={event.next_steps}
-            value={nextSteps}
-            onChange={(e) => setNextSteps(e.target.value)}
-          />
-        </div>
+        <div>Title:</div>
+        <textarea
+          className="event-input"
+          placeholder={event.title}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          rows={2}
+        />
+        <div>Transcript:</div>
+        <textarea
+          className="event-input"
+          placeholder="Event transcript"
+          value={transcript}
+          onChange={(e) => setTranscript(e.target.value)}
+          rows={6}
+        />
+        <div>Description:</div>
+        <textarea
+          className="event-input"
+          placeholder={event.notes}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={4}
+        />
+
+        <div>Next Steps:</div>
+        <textarea
+          className="event-input"
+          placeholder={event.next_steps}
+          value={nextSteps}
+          onChange={(e) => setNextSteps(e.target.value)}
+          rows={4}
+        />
+
         <div className="modal-buttons">
           <button onClick={handleSubmit}>Update</button>
           <button onClick={onDelete}>Delete</button>
