@@ -21,7 +21,14 @@ export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
       endTime = slotTimeCopy.setHours(slotTimeCopy.getHours() + 1);
       endTime = new Date(endTime).toLocaleTimeString();
     }
-    onSubmit({ title, start: startTime, end: endTime, description, nextSteps });
+    onSubmit({
+      title,
+      start: startTime,
+      end: endTime,
+      description,
+      nextSteps,
+      date,
+    });
     setTitle("");
     setDescription("");
     setNextSteps("");
@@ -43,6 +50,7 @@ export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
   // console.log("Slot time in AddEventModal:", slotTime);
   var defaultStartTime = slotTime.toLocaleTimeString();
   var slotTimeCopy = new Date(slotTime);
+  var date = new Date(slotTime);
   var defaultEndTime = slotTimeCopy.setHours(slotTimeCopy.getHours() + 1);
   defaultEndTime = new Date(defaultEndTime).toLocaleTimeString();
 

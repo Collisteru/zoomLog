@@ -130,18 +130,36 @@ export default function WeeklyCalendar() {
     end,
     description,
     nextSteps,
+    date,
   }) => {
     try {
       if (!description) description = "None.";
       if (!nextSteps) nextSteps = "None.";
+
+      function combineDateWithTime(timeStr) {
+        // Get current date in yyyy-mm-dd format
+        const desiredDate = new Date(date);
+        console.log("Desired date:", desiredDate);
+        const year = desiredDate.getFullYear();
+        const month = String(desiredDate.getMonth() + 1).padStart(2, "0"); // months are 0-indexed
+        const day = String(desiredDate.getDate()).padStart(2, "0");
+        const dateStr = `${year}-${month}-${day}`;
+
+        // Combine and parse as Date
+        const dateTimeStr = `${dateStr} ${timeStr}`;
+        return new Date(dateTimeStr); // Parsed in local time zone
+      }
+
+      const startDate = combineDateWithTime(start);
+      const endDate = combineDateWithTime(end);
 
       const res = await fetch("http://localhost:5000/api/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: title,
-          startTime: start,
-          endTime: end,
+          startTime: startDate,
+          endTime: endDate,
           notes: description,
           next_steps: nextSteps,
         }),
