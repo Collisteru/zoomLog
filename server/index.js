@@ -2,8 +2,13 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const bodyParser = require("body-parser");
+const crypto = require("crypto");
 const { PrismaClient } = require("@prisma/client");
+
+// Import secrets
 require("dotenv").config();
+const ZOOM_SECRET = process.env.ZOOM_SECRET;
 
 // Prisma server
 const prisma = new PrismaClient();
@@ -102,6 +107,86 @@ app.delete("/api/events/delete", async (req, res) => {
 app.get("/api/events", async (req, res) => {
   const events = await prisma.event.findMany();
   res.json(events);
+});
+
+// --- Zoom Endpoint --- //
+
+app.post("/zoom/webhook", express.json(), (req, res) => {
+  console.log("ZOOM WEBHOOK VERIFICATION ACTIVATED!");
+
+  // CRC Verification Endpoint
+  if (req.body.event === "endpoint.url_validation") {
+    console.log("It's a CRC");
+    const hashForValidate = crypto
+      .createHmac("sha256", ZOOM_SECRET)
+      .update(req.body.payload.plainToken)
+      .digest("hex");
+
+    res.status(200);
+    res.json({
+      plainToken: req.body.payload.plainToken,
+      encryptedToken: hashForValidate,
+    });
+  }
+
+  // Handle Event Types
+
+  const event = req.body.event;
+  const payload = req.body.payload;
+
+  console.log(`Received event: ${event}`);
+
+  if (event === "meeting.started") {
+    console.log("Meeting started:", payload.object.id);
+    // Save meeting ID, start time, topic, host_id, etc.
+  }
+
+  if (event === "meeting.ended") {
+    console.log("Meeting ended:", payload.object.id);
+    // Update meeting record to mark it as ended
+  }
+
+  res.sendStatus(200);
+});
+
+// Ping Zoom API
+app.get("/api/ping", async (req, res) => {
+  console.log("Pinging Zoom API...");
+  const token = ZOOM_SECRET;
+  try {
+    const response = await axios.get("https://api.zoom.us/v2/users/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error pinging Zoom API:", error.message);
+    res.status(500).json({ error: "Failed to ping Zoom API" });
+  }
+});
+
+// Fetch Recordings
+
+app.get("/api/recordings", async (req, res) => {
+  console.log("Fetching recordings from Zoom API...");
+  const token = ZOOM_SECRET;
+  const fetchRecordings = async (token) => {
+    try {
+      console.log("Trying...");
+      const res = await axios.get(
+        `https://api.zoom.us/v2/users/me/recordings`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Recordings fetched:", res.data);
+      return res.data;
+    } catch (error) {
+      console.error("Error fetching recordings:", error.message);
+      throw error;
+    }
+  };
 });
 
 app.use(express.static(path.join(__dirname, "../client/build")));

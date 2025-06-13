@@ -70,6 +70,19 @@ export default function WeeklyCalendar() {
     fetchEvents();
   }, [weekStart, modalOpen, editModalOpen]);
 
+  // When the app starts, ping Zoom API to verify connection
+  useEffect(() => {
+    const pingZoomAPI = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/zoom/ping");
+        console.log("Ping response:", res.data);
+      } catch (error) {
+        console.error("Error pinging Zoom API:", error);
+      }
+    };
+    pingZoomAPI();
+  }, []);
+
   const handleEventUpdate = async (updatedEvent) => {
     console.log("Updated event data:", updatedEvent);
     console.log("Event to edit:", eventToEdit);

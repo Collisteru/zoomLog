@@ -6,6 +6,7 @@ import "./Notes.js";
 import "./getEvents.js";
 import WeeklyCalendar from "./Calendar.js";
 import { GetEventsButton } from "./getEvents.js";
+import { FetchRecordingsButton } from "./fetchRecordings.js";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         </header>
 
         <main className="App-main">
+          <FetchRecordingsButton />
           {/* <GetEventsButton /> */}
           <WeeklyCalendar />
         </main>
