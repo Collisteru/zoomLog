@@ -71,10 +71,28 @@ export default function WeeklyCalendar() {
   }, [weekStart, modalOpen, editModalOpen]);
 
   const handleEventUpdate = async (updatedEvent) => {
-    await axios.put(
-      `http://localhost:5000/api/events/${updatedEvent.id}`,
-      updatedEvent
-    );
+    console.log("Updated event data:", updatedEvent);
+    console.log("Event to edit:", eventToEdit);
+
+    const title = updatedEvent.title || eventToEdit.title;
+    const startTime = updatedEvent.startTime || eventToEdit.startTime;
+    const endTime = updatedEvent.startTime || startTime;
+    const notes = updatedEvent.description || eventToEdit.notes;
+    const next_steps = updatedEvent.nextSteps || eventToEdit.next_steps;
+    const id = eventToEdit.id;
+
+    // console.log("Stuff:", id, title, startTime, endTime, notes, next_steps);
+
+    // console.log("Hi from the client.");
+    await axios.put(`http://localhost:5000/api/events/update`, {
+      id,
+      title,
+      startTime,
+      endTime,
+      notes,
+      next_steps,
+    });
+
     setEditModalOpen(false);
   };
 

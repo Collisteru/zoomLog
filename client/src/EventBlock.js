@@ -18,7 +18,7 @@ export default function EventBlock({ event, onClick }) {
         top: `${top}px`,
         height: `${height * 0.5}px`,
         width: "10%",
-        backgroundColor: "#4CAF50",
+        backgroundColor: "#2D8CFF",
         opacity: 0.6,
         color: "white",
         padding: "2px",
