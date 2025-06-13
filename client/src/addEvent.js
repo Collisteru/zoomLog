@@ -8,15 +8,26 @@ export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
   const [description, setDescription] = useState("");
   const [nextSteps, setNextSteps] = useState("");
   const [transcript, setTranscript] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
 
   if (!isOpen) return null;
 
   const handleSubmit = () => {
     if (!title) return;
-    onSubmit({ title, start: slotTime, description, nextSteps });
+    if (!startTime) startTime = slotTime.toLocaleTimeString();
+    if (!endTime) {
+      var slotTimeCopy = new Date(slotTime);
+      endTime = slotTimeCopy.setHours(slotTimeCopy.getHours() + 1);
+      endTime = new Date(endTime).toLocaleTimeString();
+    }
+    onSubmit({ title, start: startTime, end: endTime, description, nextSteps });
     setTitle("");
     setDescription("");
     setNextSteps("");
+    setTranscript("");
+    setStartTime("");
+    setEndTime("");
     onClose();
   };
 
@@ -25,15 +36,36 @@ export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
     setDescription("");
     setNextSteps("");
     setTranscript("");
+    setStartTime("");
+    setEndTime("");
     onClose();
   };
+  // console.log("Slot time in AddEventModal:", slotTime);
+  var defaultStartTime = slotTime.toLocaleTimeString();
+  var slotTimeCopy = new Date(slotTime);
+  var defaultEndTime = slotTimeCopy.setHours(slotTimeCopy.getHours() + 1);
+  defaultEndTime = new Date(defaultEndTime).toLocaleTimeString();
 
   return (
     <div className="modal-backdrop">
       <title>New Event</title>
       <div className="modal">
         <h2>New Event</h2>
-        <p>{slotTime.toLocaleString()}</p>
+        <input
+          type="text"
+          className="event-input"
+          placeholder={defaultStartTime}
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+        />
+
+        <input
+          type="text"
+          className="event-input"
+          placeholder={defaultEndTime}
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+        />
         <textarea
           className="event-input"
           placeholder="Event Title"

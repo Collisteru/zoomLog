@@ -127,29 +127,30 @@ export default function WeeklyCalendar() {
   const handleModalSubmit = async ({
     title,
     start,
+    end,
     description,
     nextSteps,
   }) => {
-    const end = new Date(start);
-    end.setHours(end.getHours() + 1);
-
     try {
+      if (!description) description = "None.";
+      if (!nextSteps) nextSteps = "None.";
+
       const res = await fetch("http://localhost:5000/api/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title,
-          startTime: start.toISOString(),
-          endTime: end.toISOString(),
+          title: title,
+          startTime: start,
+          endTime: end,
           notes: description,
           next_steps: nextSteps,
         }),
       });
+      console.log("Yet another.");
 
       const result = await res.json();
       console.log("Event saved:", result);
       setNewEventSlot(null);
-      setEventTitle("Test Event");
       // Optionally close modal or refresh events here
     } catch (error) {
       console.error("Error saving event:", error);

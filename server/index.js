@@ -41,17 +41,40 @@ app.post("/api/notes", async (req, res) => {
 
 // Post a new meeting
 app.post("/api/events", async (req, res) => {
+  console.log("Hi from the server.");
+  console.log("Received event data:", req.body);
   const { title, startTime, endTime, notes, next_steps } = req.body;
-  const event = await prisma.event.create({
-    data: {
-      title,
-      startTime: new Date(startTime),
-      endTime: new Date(endTime),
-      notes,
-      next_steps,
-    },
-  });
-  res.json(event);
+  function combineDateWithTime(timeStr) {
+    // Get current date in yyyy-mm-dd format
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // months are 0-indexed
+    const day = String(now.getDate()).padStart(2, "0");
+    const dateStr = `${year}-${month}-${day}`;
+
+    // Combine and parse as Date
+    const dateTimeStr = `${dateStr} ${timeStr}`;
+    return new Date(dateTimeStr); // Parsed in local time zone
+  }
+
+  const startDate = combineDateWithTime(startTime);
+  const endDate = combineDateWithTime(endTime);
+  console.log("In server endpoint, received event data:", req.body);
+  try {
+    const event = await prisma.event.create({
+      data: {
+        title,
+        startTime: startDate,
+        endTime: endDate,
+        notes,
+        next_steps,
+      },
+    });
+    res.json(event);
+  } catch (error) {
+    console.error("Error creating event:", error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Update a meeting
