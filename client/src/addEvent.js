@@ -1,6 +1,7 @@
 // AddEventModal.js
 import React, { useState } from "react";
 import "./EventModal.css";
+import { handleSummarize } from "./summarize.js";
 
 export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
   const [title, setTitle] = useState("");
@@ -19,31 +20,11 @@ export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
     onClose();
   };
 
-  const handleSummarize = async () => {
-    if (!transcript) return;
-    try {
-      const response = await fetch("/api/summarize", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ transcription: transcript }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setDescription(data.summary);
-      } else {
-        console.error("Error summarizing transcript:", data.error);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   const clearFields = () => {
     setTitle("");
     setDescription("");
     setNextSteps("");
+    setTranscript("");
     onClose();
   };
 
@@ -85,7 +66,14 @@ export default function AddEventModal({ isOpen, onClose, onSubmit, slotTime }) {
 
         <div className="modal-buttons">
           <button onClick={handleSubmit}>Add</button>
-          <button onClick={handleSummarize}>Summarize</button>
+          <button
+            onClick={async () => {
+              const summary = await handleSummarize(transcript);
+              setDescription(summary);
+            }}
+          >
+            Summarize
+          </button>
           <button onClick={clearFields}>Cancel</button>
         </div>
       </div>

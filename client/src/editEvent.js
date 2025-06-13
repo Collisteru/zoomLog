@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./EventModal.css";
+import { handleSummarize } from "./summarize.js";
 
 export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
   const [title, setTitle] = useState("");
@@ -79,6 +80,14 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
         <div className="modal-buttons">
           <button onClick={handleSubmit}>Update</button>
           <button onClick={onDelete}>Delete</button>
+          <button
+            onClick={async () => {
+              const summary = await handleSummarize(transcript);
+              setDescription(summary);
+            }}
+          >
+            Summarize
+          </button>
           <button onClick={clearFields}>Cancel</button>
         </div>
       </div>
