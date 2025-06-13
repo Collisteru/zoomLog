@@ -41,6 +41,7 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event }) {
   return (
     <div className="modal-backdrop">
       <div className="modal">
+        <h1>Edit Event:</h1>
         <div>Title:</div>
         <textarea
           className="event-input"
